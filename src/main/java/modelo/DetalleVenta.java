@@ -7,11 +7,11 @@ public class DetalleVenta {
     private double precioUnitario;
     private double subTotal;
 
-    public DetalleVenta(Producto producto, int cantidad, double precioUnitario, double subTotal) {
+    public DetalleVenta(Producto producto, int cantidad, double precioUnitario) {
         this.producto = producto;
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
-        this.subTotal = subTotal;
+        this.subTotal = precioUnitario * cantidad;
     }
 
     public DetalleVenta(){}

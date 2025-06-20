@@ -17,6 +17,13 @@ public class Domicilio {
         this.provincia = provincia;
     }
 
+    public Domicilio(long idDomicilio, String calle, String numero, Localidad localidad) {
+        this.idDomicilio = idDomicilio;
+        this.calle = calle;
+        this.numero = numero;
+        this.localidad = localidad;
+    }
+
     public long getIdDomicilio() {
         return idDomicilio;
     }
