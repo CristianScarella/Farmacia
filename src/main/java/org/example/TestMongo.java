@@ -1,51 +1,60 @@
 package org.example;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoCollection;
-
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
-import modelo.*;
-import org.bson.Document;
-import org.example.utils.JacksonUtils;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bson.Document;
+import org.example.utils.JacksonUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+
+import modelo.Cliente;
+import modelo.DetalleVenta;
+import modelo.Domicilio;
+import modelo.Empleado;
+import modelo.Localidad;
+import modelo.ObraSocial;
+import modelo.Producto;
+import modelo.Provincia;
+import modelo.Sucursal;
+import modelo.Venta;
+
 public class TestMongo {
     public static void main(String[] args) {
-        //ENTREGA 2
-
         Provincia provincia = new Provincia(0001, "Buenos Aires");
         Localidad localidad = new Localidad(0001, "La Plata", provincia);
 
-        //obra social
+        //obra sociales
         ObraSocial obraSocial = new ObraSocial(0001, "OSDE");
+        ObraSocial obraSocial2 = new ObraSocial(0002, "Swiss Medical");
+        ObraSocial obraSocial3 = new ObraSocial(0003, "Galeno");
+        ObraSocial obraSocial4 = new ObraSocial(0004, "Medife");
+        ObraSocial obraSocial5 = new ObraSocial(0005, "Omint");
 
-        //domicilio
+        //domicilios sucursales
         Domicilio domicilioSucursal1 = new Domicilio(0001, "Calle 7", "1234", localidad);
         Domicilio domicilioSucursal2 = new Domicilio(0002, "Calle 8", "5678", localidad);
         Domicilio domicilioSucursal3 = new Domicilio(0003, "Calle 9", "9998", localidad);
 
         //crear empleado
-        Empleado empleadoSucursal1Atencion = getEmpleado1(obraSocial);
-        Empleado empleadoSucursal2Atencion = getEmpleado2(obraSocial);
-        Empleado empleadoSucursal1Cobro = getEmpleado3(obraSocial);
-        Empleado empleadoSucursal2Cobro = getEmpleado4(obraSocial);
-        
-        //nuevos empleados
-        Empleado empleadoSucursal1Encargado = new Empleado(0005, "Homero", "Simpson", "88433246", "20884332469", "AF8111200", null, obraSocial, null);
-        Empleado empleadoSucursal2Encargado = new Empleado(0006, "Maria", "Lopez", "55777666", "27557776669", "AF8222200", null, obraSocial, null);
-        Empleado empleadoSucursal3Encargado = new Empleado(0007, "Carlos", "Diaz", "43323487", "20433234878", "AF9332200", null, obraSocial, null);
-        Empleado empleadoSucursal3Atencion= new Empleado(8l, "Andrea", "Mendez", "99667555", "27996675559", "AF9732200", null, obraSocial, null);
-        Empleado empleadoSucursal3Cobro = new Empleado(9l, "Jorge", "Ruiz", "22928663", "20229286639", "AF819270", null, obraSocial, null);
+        Empleado empleadoSucursal1Atencion = new Empleado(0001, "Lucía", "Gómez", "29333444", "2245454545", "AF789012", null, obraSocial, null);
+        Empleado empleadoSucursal2Atencion = new Empleado(0002, "Oscar", "Gómez", "12345678", "2365788745", "AF652845", null, obraSocial2, null);        
+        Empleado empleadoSucursal3Atencion= new Empleado(0003, "Andrea", "Mendez", "99667555", "27996675559", "AF9732200", null, obraSocial4, null);
+        Empleado empleadoSucursal1Cobro = new Empleado(0004, "Roberto", "Garcia", "7845653252", "2352568522", "AF124512", null, obraSocial3, null);
+        Empleado empleadoSucursal2Cobro = new Empleado(0005, "Ricardo", "Fort", "99888777", "20998887773", "AF829402", null, obraSocial4, null);
+        Empleado empleadoSucursal3Cobro = new Empleado(0006, "Jorge", "Ruiz", "22928663", "20229286639", "AF819270", null, obraSocial5, null);
+        Empleado empleadoSucursal1Encargado = new Empleado(0007, "Homero", "Simpson", "88433246", "20884332469", "AF8111200", null, obraSocial, null);
+        Empleado empleadoSucursal2Encargado = new Empleado(8l, "Maria", "Lopez", "55777666", "27557776669", "AF8222200", null, obraSocial2, null);
+        Empleado empleadoSucursal3Encargado = new Empleado(9l, "Carlos", "Diaz", "43323487", "20433234878", "AF9332200", null, obraSocial3, null);
 
         //sucursal
         Sucursal sucursal1 = new Sucursal(0001, 0001l, domicilioSucursal1, empleadoSucursal1Encargado);
@@ -99,70 +108,100 @@ public class TestMongo {
         
         List<Venta> ventasTotales = new ArrayList<>();
         
-        ventasTotales.add(generarVenta((long) 0001, LocalDate.of(2025,06,1),sucursal1.getPuntoDeVenta()+"-11111111", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1, detalleVenta2)));
-        ventasTotales.add(generarVenta((long) 0002, LocalDate.of(2025,06,2),sucursal1.getPuntoDeVenta()+"-11111112", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta3)));
-        ventasTotales.add(generarVenta((long) 0003, LocalDate.of(2025,06,3),sucursal1.getPuntoDeVenta()+"-11111113", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4, detalleVenta5)));
-        ventasTotales.add(generarVenta((long) 0004, LocalDate.of(2025,06,4),sucursal1.getPuntoDeVenta()+"-11111114", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0005, LocalDate.of(2025,06,5),sucursal1.getPuntoDeVenta()+"-11111115", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta7, detalleVenta8)));
-        ventasTotales.add(generarVenta((long) 0006, LocalDate.of(2025,06,6),sucursal1.getPuntoDeVenta()+"-11111116", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10)));
-        ventasTotales.add(generarVenta((long) 0007, LocalDate.of(2025,06,7),sucursal1.getPuntoDeVenta()+"-11111117", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10, detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 1, LocalDate.of(2025,06,1),sucursal1.getPuntoDeVenta()+"-11111111", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1, detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 2, LocalDate.of(2025,06,2),sucursal1.getPuntoDeVenta()+"-11111112", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta3)));
+        ventasTotales.add(generarVenta((long) 3, LocalDate.of(2025,06,3),sucursal1.getPuntoDeVenta()+"-11111113", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4, detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 4, LocalDate.of(2025,06,4),sucursal1.getPuntoDeVenta()+"-11111114", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 5, LocalDate.of(2025,06,5),sucursal1.getPuntoDeVenta()+"-11111115", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta7, detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 6, LocalDate.of(2025,06,6),sucursal1.getPuntoDeVenta()+"-11111116", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10)));
+        ventasTotales.add(generarVenta((long) 7, LocalDate.of(2025,06,7),sucursal1.getPuntoDeVenta()+"-11111117", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10, detalleVenta11)));
         ventasTotales.add(generarVenta((long) 8, LocalDate.of(2025,06,8),sucursal1.getPuntoDeVenta()+"-11111118", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4)));
         ventasTotales.add(generarVenta((long) 9, LocalDate.of(2025,06,9),sucursal1.getPuntoDeVenta()+"-11111119", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta7, detalleVenta13)));
-        ventasTotales.add(generarVenta((long) 0010, LocalDate.of(2025,06,10),sucursal1.getPuntoDeVenta()+"-11111120", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10)));
-        ventasTotales.add(generarVenta((long) 0011, LocalDate.of(2025,06,11),sucursal1.getPuntoDeVenta()+"-11111121", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta9, detalleVenta12)));
-        ventasTotales.add(generarVenta((long) 0012, LocalDate.of(2025,06,12),sucursal1.getPuntoDeVenta()+"-11111122", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta8)));
-        ventasTotales.add(generarVenta((long) 0013, LocalDate.of(2025,06,13),sucursal1.getPuntoDeVenta()+"-11111123", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14, detalleVenta5)));
-        ventasTotales.add(generarVenta((long) 0014, LocalDate.of(2025,06,14),sucursal1.getPuntoDeVenta()+"-11111124", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 0015, LocalDate.of(2025,06,15),sucursal1.getPuntoDeVenta()+"-11111125", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10, detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0016, LocalDate.of(2025,06,16),sucursal1.getPuntoDeVenta()+"-11111126", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta8)));
-        ventasTotales.add(generarVenta((long) 0017, LocalDate.of(2025,06,17),sucursal1.getPuntoDeVenta()+"-11111127", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6, detalleVenta13)));
+        ventasTotales.add(generarVenta((long) 10, LocalDate.of(2025,06,10),sucursal1.getPuntoDeVenta()+"-11111120", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10)));
+        ventasTotales.add(generarVenta((long) 11, LocalDate.of(2025,06,11),sucursal1.getPuntoDeVenta()+"-11111121", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta9, detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 12, LocalDate.of(2025,06,12),sucursal1.getPuntoDeVenta()+"-11111122", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 13, LocalDate.of(2025,06,13),sucursal1.getPuntoDeVenta()+"-11111123", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14, detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 14, LocalDate.of(2025,06,14),sucursal1.getPuntoDeVenta()+"-11111124", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 15, LocalDate.of(2025,06,15),sucursal1.getPuntoDeVenta()+"-11111125", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta10, detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 16, LocalDate.of(2025,06,16),sucursal1.getPuntoDeVenta()+"-11111126", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 17, LocalDate.of(2025,06,17),sucursal1.getPuntoDeVenta()+"-11111127", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6, detalleVenta13)));
         ventasTotales.add(generarVenta((long) 18, LocalDate.of(2025,06,18),sucursal1.getPuntoDeVenta()+"-11111128", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1)));
         ventasTotales.add(generarVenta((long) 19, LocalDate.of(2025,06,19),sucursal1.getPuntoDeVenta()+"-11111129", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1, detalleVenta7)));
-        ventasTotales.add(generarVenta((long) 0020, LocalDate.of(2025,06,20),sucursal1.getPuntoDeVenta()+"-11111130", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4)));
-        ventasTotales.add(generarVenta((long) 0021, LocalDate.of(2025,06,21),sucursal1.getPuntoDeVenta()+"-11111131", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4, detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 0022, LocalDate.of(2025,06,22),sucursal1.getPuntoDeVenta()+"-11111132", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1)));
-        ventasTotales.add(generarVenta((long) 0023, LocalDate.of(2025,06,23),sucursal1.getPuntoDeVenta()+"-11111133", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta2, detalleVenta13)));
-        ventasTotales.add(generarVenta((long) 0024, LocalDate.of(2025,06,24),sucursal1.getPuntoDeVenta()+"-11111134", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0025, LocalDate.of(2025,06,25),sucursal1.getPuntoDeVenta()+"-11111135", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14, detalleVenta13)));
-        ventasTotales.add(generarVenta((long) 0026, LocalDate.of(2025,06,26),sucursal1.getPuntoDeVenta()+"-11111136", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 20, LocalDate.of(2025,06,20),sucursal1.getPuntoDeVenta()+"-11111130", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4)));
+        ventasTotales.add(generarVenta((long) 21, LocalDate.of(2025,06,21),sucursal1.getPuntoDeVenta()+"-11111131", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta4, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 22, LocalDate.of(2025,06,22),sucursal1.getPuntoDeVenta()+"-11111132", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 23, LocalDate.of(2025,06,23),sucursal1.getPuntoDeVenta()+"-11111133", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta2, detalleVenta13)));
+        ventasTotales.add(generarVenta((long) 24, LocalDate.of(2025,06,24),sucursal1.getPuntoDeVenta()+"-11111134", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 25, LocalDate.of(2025,06,25),sucursal1.getPuntoDeVenta()+"-11111135", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta14, detalleVenta13)));
+        ventasTotales.add(generarVenta((long) 26, LocalDate.of(2025,06,26),sucursal1.getPuntoDeVenta()+"-11111136", sucursal1, empleadoSucursal1Atencion, empleadoSucursal1Cobro, List.of(detalleVenta11)));
 
-        ventasTotales.add(generarVenta((long) 0027, LocalDate.of(2025,06,1),sucursal2.getPuntoDeVenta()+"-22222222", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1)));
-        ventasTotales.add(generarVenta((long) 28l, LocalDate.of(2025,06,1),sucursal2.getPuntoDeVenta()+"-22222223", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1, detalleVenta2)));
-        ventasTotales.add(generarVenta((long) 29l, LocalDate.of(2025,06,2),sucursal2.getPuntoDeVenta()+"-22222224", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta3)));
-        ventasTotales.add(generarVenta((long) 0030, LocalDate.of(2025,06,3),sucursal2.getPuntoDeVenta()+"-22222225", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4, detalleVenta5)));
-        ventasTotales.add(generarVenta((long) 0031, LocalDate.of(2025,06,4),sucursal2.getPuntoDeVenta()+"-22222226", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4)));
-        ventasTotales.add(generarVenta((long) 0032, LocalDate.of(2025,06,5),sucursal2.getPuntoDeVenta()+"-22222227", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6, detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 0033, LocalDate.of(2025,06,6),sucursal2.getPuntoDeVenta()+"-22222228", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1)));
-        ventasTotales.add(generarVenta((long) 0034, LocalDate.of(2025,06,6),sucursal2.getPuntoDeVenta()+"-22222229", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta14, detalleVenta3)));
-        ventasTotales.add(generarVenta((long) 0035, LocalDate.of(2025,06,7),sucursal2.getPuntoDeVenta()+"-22222230", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4)));
-        ventasTotales.add(generarVenta((long) 0036, LocalDate.of(2025,06,8),sucursal2.getPuntoDeVenta()+"-22222231", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5, detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0037, LocalDate.of(2025,06,9),sucursal2.getPuntoDeVenta()+"-22222232", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2)));
-        ventasTotales.add(generarVenta((long) 38l, LocalDate.of(2025,06,10),sucursal2.getPuntoDeVenta()+"-22222233", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7, detalleVenta8)));
-        ventasTotales.add(generarVenta((long) 39l, LocalDate.of(2025,06,11),sucursal2.getPuntoDeVenta()+"-22222234", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0040, LocalDate.of(2025,06,12),sucursal2.getPuntoDeVenta()+"-22222235", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta8, detalleVenta9)));
-        ventasTotales.add(generarVenta((long) 0041, LocalDate.of(2025,06,13),sucursal2.getPuntoDeVenta()+"-22222236", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta9)));
-        ventasTotales.add(generarVenta((long) 0042, LocalDate.of(2025,06,14),sucursal2.getPuntoDeVenta()+"-22222237", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta14, detalleVenta10)));
-        ventasTotales.add(generarVenta((long) 0043, LocalDate.of(2025,06,15),sucursal2.getPuntoDeVenta()+"-22222238", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta8)));
-        ventasTotales.add(generarVenta((long) 0044, LocalDate.of(2025,06,16),sucursal2.getPuntoDeVenta()+"-22222239", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta10, detalleVenta11)));
-        ventasTotales.add(generarVenta((long) 0045, LocalDate.of(2025,06,17),sucursal2.getPuntoDeVenta()+"-22222240", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta12)));
-        ventasTotales.add(generarVenta((long) 0046, LocalDate.of(2025,06,18),sucursal2.getPuntoDeVenta()+"-22222241", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4, detalleVenta12)));
-        ventasTotales.add(generarVenta((long) 0047, LocalDate.of(2025,06,19),sucursal2.getPuntoDeVenta()+"-22222242", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta12)));
-        ventasTotales.add(generarVenta((long) 48l, LocalDate.of(2025,06,20),sucursal2.getPuntoDeVenta()+"-22222243", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta13, detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 49l, LocalDate.of(2025,06,21),sucursal2.getPuntoDeVenta()+"-22222244", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5)));
-        ventasTotales.add(generarVenta((long) 0050, LocalDate.of(2025,06,22),sucursal2.getPuntoDeVenta()+"-22222245", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta13, detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 0051, LocalDate.of(2025,06,23),sucursal2.getPuntoDeVenta()+"-22222246", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2)));
-        ventasTotales.add(generarVenta((long) 0052, LocalDate.of(2025,06,24),sucursal2.getPuntoDeVenta()+"-22222247", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2, detalleVenta5)));
-        ventasTotales.add(generarVenta((long) 0053, LocalDate.of(2025,06,25),sucursal2.getPuntoDeVenta()+"-22222248", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11)));
-        ventasTotales.add(generarVenta((long) 0054, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222249", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5, detalleVenta1)));
-        ventasTotales.add(generarVenta((long) 0055, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222250", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7)));
-        ventasTotales.add(generarVenta((long) 0056, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222251", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 0057, LocalDate.of(2025,06,27),sucursal2.getPuntoDeVenta()+"-22222252", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6)));
-        ventasTotales.add(generarVenta((long) 58l, LocalDate.of(2025,06,27),sucursal2.getPuntoDeVenta()+"-22222253", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta7)));
-        ventasTotales.add(generarVenta((long) 59l, LocalDate.of(2025,06,28),sucursal2.getPuntoDeVenta()+"-22222254", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7)));
-        ventasTotales.add(generarVenta((long) 0060, LocalDate.of(2025,06,29),sucursal2.getPuntoDeVenta()+"-22222255", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta7)));
-        ventasTotales.add(generarVenta((long) 0061, LocalDate.of(2025,06,30),sucursal2.getPuntoDeVenta()+"-22222256", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta14)));
-        ventasTotales.add(generarVenta((long) 0062, LocalDate.of(2025,06,30),sucursal2.getPuntoDeVenta()+"-22222257", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 27, LocalDate.of(2025,06,1),sucursal2.getPuntoDeVenta()+"-22222222", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 28, LocalDate.of(2025,06,1),sucursal2.getPuntoDeVenta()+"-22222223", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1, detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 29, LocalDate.of(2025,06,2),sucursal2.getPuntoDeVenta()+"-22222224", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta3)));
+        ventasTotales.add(generarVenta((long) 30, LocalDate.of(2025,06,3),sucursal2.getPuntoDeVenta()+"-22222225", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4, detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 31, LocalDate.of(2025,06,4),sucursal2.getPuntoDeVenta()+"-22222226", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4)));
+        ventasTotales.add(generarVenta((long) 32, LocalDate.of(2025,06,5),sucursal2.getPuntoDeVenta()+"-22222227", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 33, LocalDate.of(2025,06,6),sucursal2.getPuntoDeVenta()+"-22222228", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 34, LocalDate.of(2025,06,6),sucursal2.getPuntoDeVenta()+"-22222229", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta14, detalleVenta3)));
+        ventasTotales.add(generarVenta((long) 35, LocalDate.of(2025,06,7),sucursal2.getPuntoDeVenta()+"-22222230", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4)));
+        ventasTotales.add(generarVenta((long) 36, LocalDate.of(2025,06,8),sucursal2.getPuntoDeVenta()+"-22222231", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5, detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 37, LocalDate.of(2025,06,9),sucursal2.getPuntoDeVenta()+"-22222232", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 38, LocalDate.of(2025,06,10),sucursal2.getPuntoDeVenta()+"-22222233", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7, detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 39, LocalDate.of(2025,06,11),sucursal2.getPuntoDeVenta()+"-22222234", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 40, LocalDate.of(2025,06,12),sucursal2.getPuntoDeVenta()+"-22222235", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta8, detalleVenta9)));
+        ventasTotales.add(generarVenta((long) 41, LocalDate.of(2025,06,13),sucursal2.getPuntoDeVenta()+"-22222236", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta9)));
+        ventasTotales.add(generarVenta((long) 42, LocalDate.of(2025,06,14),sucursal2.getPuntoDeVenta()+"-22222237", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta14, detalleVenta10)));
+        ventasTotales.add(generarVenta((long) 43, LocalDate.of(2025,06,15),sucursal2.getPuntoDeVenta()+"-22222238", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 44, LocalDate.of(2025,06,16),sucursal2.getPuntoDeVenta()+"-22222239", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta10, detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 45, LocalDate.of(2025,06,17),sucursal2.getPuntoDeVenta()+"-22222240", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 46, LocalDate.of(2025,06,18),sucursal2.getPuntoDeVenta()+"-22222241", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta4, detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 47, LocalDate.of(2025,06,19),sucursal2.getPuntoDeVenta()+"-22222242", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 48, LocalDate.of(2025,06,20),sucursal2.getPuntoDeVenta()+"-22222243", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta13, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 49, LocalDate.of(2025,06,21),sucursal2.getPuntoDeVenta()+"-22222244", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 50, LocalDate.of(2025,06,22),sucursal2.getPuntoDeVenta()+"-22222245", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta13, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 51, LocalDate.of(2025,06,23),sucursal2.getPuntoDeVenta()+"-22222246", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 52, LocalDate.of(2025,06,24),sucursal2.getPuntoDeVenta()+"-22222247", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta2, detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 53, LocalDate.of(2025,06,25),sucursal2.getPuntoDeVenta()+"-22222248", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 54, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222249", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta5, detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 55, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222250", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7)));
+        ventasTotales.add(generarVenta((long) 56, LocalDate.of(2025,06,26),sucursal2.getPuntoDeVenta()+"-22222251", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 57, LocalDate.of(2025,06,27),sucursal2.getPuntoDeVenta()+"-22222252", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta6)));
+        ventasTotales.add(generarVenta((long) 58, LocalDate.of(2025,06,27),sucursal2.getPuntoDeVenta()+"-22222253", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta7)));
+        ventasTotales.add(generarVenta((long) 59, LocalDate.of(2025,06,28),sucursal2.getPuntoDeVenta()+"-22222254", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta7)));
+        ventasTotales.add(generarVenta((long) 60, LocalDate.of(2025,06,29),sucursal2.getPuntoDeVenta()+"-22222255", sucursal2, empleadoSucursal2Atencion, empleadoSucursal2Cobro, List.of(detalleVenta11, detalleVenta7)));
         
+        ventasTotales.add(generarVenta((long) 61, LocalDate.of(2025,06,1),sucursal3.getPuntoDeVenta()+"-33333333", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta10)));
+        ventasTotales.add(generarVenta((long) 62, LocalDate.of(2025,06,2),sucursal3.getPuntoDeVenta()+"-33333334", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1, detalleVenta2)));
+        ventasTotales.add(generarVenta((long) 63, LocalDate.of(2025,06,3),sucursal3.getPuntoDeVenta()+"-33333335", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta3)));
+        ventasTotales.add(generarVenta((long) 64, LocalDate.of(2025,06,4),sucursal3.getPuntoDeVenta()+"-33333336", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta6, detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 65, LocalDate.of(2025,06,5),sucursal3.getPuntoDeVenta()+"-33333337", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta4)));
+        ventasTotales.add(generarVenta((long) 66, LocalDate.of(2025,06,6),sucursal3.getPuntoDeVenta()+"-33333338", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta6, detalleVenta7, detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 67, LocalDate.of(2025,06,7),sucursal3.getPuntoDeVenta()+"-33333339", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 68, LocalDate.of(2025,06,8),sucursal3.getPuntoDeVenta()+"-33333340", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 69, LocalDate.of(2025,06,9),sucursal3.getPuntoDeVenta()+"-33333341", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta10, detalleVenta7)));
+        ventasTotales.add(generarVenta((long) 70, LocalDate.of(2025,06,10),sucursal3.getPuntoDeVenta()+"-33333342", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 71, LocalDate.of(2025,06,11),sucursal3.getPuntoDeVenta()+"-33333343", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta13, detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 72, LocalDate.of(2025,06,12),sucursal3.getPuntoDeVenta()+"-33333344", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 73, LocalDate.of(2025,06,13),sucursal3.getPuntoDeVenta()+"-33333345", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta6, detalleVenta7)));
+        ventasTotales.add(generarVenta((long) 74, LocalDate.of(2025,06,14),sucursal3.getPuntoDeVenta()+"-33333346", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta8)));
+        ventasTotales.add(generarVenta((long) 75, LocalDate.of(2025,06,15),sucursal3.getPuntoDeVenta()+"-33333347", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta9, detalleVenta10)));
+        ventasTotales.add(generarVenta((long) 76, LocalDate.of(2025,06,16),sucursal3.getPuntoDeVenta()+"-33333348", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 77, LocalDate.of(2025,06,17),sucursal3.getPuntoDeVenta()+"-33333349", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta12, detalleVenta13)));
+        ventasTotales.add(generarVenta((long) 78, LocalDate.of(2025,06,18),sucursal3.getPuntoDeVenta()+"-33333350", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta13)));
+        ventasTotales.add(generarVenta((long) 79, LocalDate.of(2025,06,19),sucursal3.getPuntoDeVenta()+"-33333351", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta13, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 80, LocalDate.of(2025,06,20),sucursal3.getPuntoDeVenta()+"-33333352", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 81, LocalDate.of(2025,06,21),sucursal3.getPuntoDeVenta()+"-33333353", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta3, detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 82, LocalDate.of(2025,06,22),sucursal3.getPuntoDeVenta()+"-33333354", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta5)));
+        ventasTotales.add(generarVenta((long) 83, LocalDate.of(2025,06,23),sucursal3.getPuntoDeVenta()+"-33333355", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta3, detalleVenta14)));
+        ventasTotales.add(generarVenta((long) 84, LocalDate.of(2025,06,24),sucursal3.getPuntoDeVenta()+"-33333356", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1)));
+        ventasTotales.add(generarVenta((long) 85, LocalDate.of(2025,06,25),sucursal3.getPuntoDeVenta()+"-33333357", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1, detalleVenta9)));
+        ventasTotales.add(generarVenta((long) 86, LocalDate.of(2025,06,26),sucursal3.getPuntoDeVenta()+"-33333358", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta9, detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 87, LocalDate.of(2025,06,27),sucursal3.getPuntoDeVenta()+"-33333359", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta11)));
+        ventasTotales.add(generarVenta((long) 88, LocalDate.of(2025,06,28),sucursal3.getPuntoDeVenta()+"-33333360", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta8, detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 89, LocalDate.of(2025,06,29),sucursal3.getPuntoDeVenta()+"-33333361", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta12)));
+        ventasTotales.add(generarVenta((long) 90, LocalDate.of(2025,06,30),sucursal3.getPuntoDeVenta()+"-33333362", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1, detalleVenta6)));
+
+
 
         // Fin de carga de datos
 
@@ -173,23 +212,32 @@ public class TestMongo {
             MongoDatabase database = mongoClient.getDatabase("miFarmaciaDB");
             MongoCollection<Document> coleccionVentas = database.getCollection("ventas");
 
-            // Convertir la venta a JSON y luego a Document (Mongo)
-            List<Document> documentosVentas = ventasTotales.stream()
-                    .map(venta -> {
-                        try {
-                            String json = mapper.writeValueAsString(venta);
-                            return Document.parse(json);
-                        } catch (JsonProcessingException e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                    .toList();
+//            // Convertir la venta a JSON y luego a Document (Mongo)
+//            List<Document> documentosVentas = ventasTotales.stream()
+//                    .map(venta -> {
+//                        try {
+//                            String json = mapper.writeValueAsString(venta);
+//                            return Document.parse(json);
+//                        } catch (JsonProcessingException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    })
+//                    .toList();
+//
+//            coleccionVentas.insertMany(documentosVentas);
 
-            coleccionVentas.insertMany(documentosVentas);
+            System.out.println("Ventas insertadas exitosamente en MongoDB");
+            
+            System.out.println("Se procede a realizar las consultas en MongoDB");
+            String fechaDesde = "2025-06-01";
+            String fechaHasta = "2025-06-06";
 
-            System.out.println("Venta insertada exitosamente en MongoDB");
-
-            realizarConsulta1(coleccionVentas);
+            realizarConsulta1(coleccionVentas, fechaDesde, fechaHasta);
+            //realizarConsulta2(coleccionVentas);
+            realizarConsulta3(coleccionVentas, fechaDesde, fechaHasta);
+            realizarConsulta4(coleccionVentas, fechaDesde, fechaHasta);
+            realizarConsulta5(coleccionVentas);
+            realizarConsulta6(coleccionVentas);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -290,31 +338,125 @@ public class TestMongo {
         return empleado;
     }
 
-    private static void realizarConsulta1(MongoCollection<Document> coleccionVentas) {
+    private static void realizarConsulta1(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
+    	System.out.println("========================================");
+    	System.out.println("Consulta 1");
+    	
         var pipeline = Arrays.asList(
-                Aggregates.match(Filters.and(
-                        Filters.gte("fechaVenta", "2025-06-01"),
-                        Filters.lte("fechaVenta", "2025-06-06")
-                )),
-                Aggregates.group(
-                        "$puntoVenta",
-                        Accumulators.sum("totalSucursal", "$totalVenta"),
-                        Accumulators.sum("cantidadVentas", 1),
-                        Accumulators.push("detalles", "$detallesVenta")
-                ),
-                Aggregates.group(
-                        null,
-                        Accumulators.sum("totalGeneral", "$totalSucursal"),
-                        Accumulators.push("porSucursal", new Document("puntoVenta", "$_id")
-                                .append("totalSucursal", "$totalSucursal")
-                                .append("cantidadVentas", "$cantidadVentas")
-                                .append("detalles", "$detalles"))
-                )
+            Aggregates.match(Filters.and(
+                Filters.gte("fechaVenta", fechaDesde),
+                Filters.lte("fechaVenta", fechaHasta)
+            )),
+            Aggregates.group(
+                "$puntoVenta",
+                Accumulators.sum("cantidadVentas", 1)
+            ),
+            Aggregates.group(
+                null,
+                Accumulators.sum("totalCadena", "$cantidadVentas"),
+                Accumulators.push("porSucursal", new Document("sucursal", "$_id")
+                    .append("cantidad", "$cantidadVentas"))
+            )
         );
 
-        coleccionVentas.aggregate(pipeline).forEach(doc -> {
-            System.out.println(doc.toJson());
-        });
+        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
+        
+        System.out.println("========================================\n");
+    }
+
+    private static void realizarConsulta3(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
+    	System.out.println("========================================");
+    	System.out.println("Consulta 3");
+
+        var pipeline = Arrays.asList(
+            Aggregates.match(Filters.and(
+                Filters.gte("fechaVenta", fechaDesde),
+                Filters.lte("fechaVenta", fechaHasta)
+            )),
+            Aggregates.group(
+                "$puntoVenta",
+                Accumulators.sum("totalSucursal", "$totalVenta")
+            ),
+            Aggregates.group(
+                null,
+                Accumulators.sum("totalCadena", "$totalSucursal"),
+                Accumulators.push("porSucursal", new Document("sucursal", "$_id")
+                    .append("total", "$totalSucursal"))
+            )
+        );
+
+        // Imprime cada uno de los resultados
+        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
+        
+    	System.out.println("========================================\n");
+    }
+
+    private static void realizarConsulta4(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
+    	System.out.println("========================================");
+    	System.out.println("Consulta 4");
+
+        var pipeline = Arrays.asList(
+            Aggregates.match(Filters.and(
+                Filters.gte("fechaVenta", fechaDesde),
+                Filters.lte("fechaVenta", fechaHasta)
+            )),
+            Aggregates.unwind("$detallesVenta"),
+            Aggregates.group(
+                new Document("tipoProducto",
+                    new Document("$cond", Arrays.asList(
+                        "$detallesVenta.producto.esMedicamento",
+                        "Farmacia",
+                        "Perfumería"
+                    ))
+                ),
+                Accumulators.sum("cantidad", "$detallesVenta.cantidad")
+            )
+        );
+
+        // Imprime cada uno de los resultados
+        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
+
+        System.out.println("========================================\n");
+    }
+    
+    private static void realizarConsulta5(MongoCollection<Document> coleccionVentas) {
+    	System.out.println("========================================");
+    	System.out.println("Consulta 5");
+
+        var pipeline = Arrays.asList(
+            Aggregates.unwind("$detallesVenta"),
+            Aggregates.group(
+                new Document("producto", "$detallesVenta.producto.descripcionProducto")
+                    .append("sucursal", "$puntoVenta"),
+                Accumulators.sum("montoTotal", "$detallesVenta.subTotal")
+            ),
+            Aggregates.sort(new Document("montoTotal", -1))
+        );
+
+        // Imprime cada uno de los resultados
+        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
+
+        System.out.println("========================================\n");
+    }
+    
+    private static void realizarConsulta6(MongoCollection<Document> coleccionVentas) {
+    	System.out.println("========================================");
+    	System.out.println("Consulta 6");
+
+        var pipeline = Arrays.asList(
+            Aggregates.unwind("$detallesVenta"),
+            Aggregates.group(
+                new Document("producto", "$detallesVenta.producto.descripcionProducto")
+                    .append("sucursal", "$puntoVenta"),
+                Accumulators.sum("cantidadVendida", "$detallesVenta.cantidad")
+            ),
+            Aggregates.sort(new Document("cantidadVendida", -1))
+        );
+
+        // Imprime cada uno de los resultados
+        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
+
+        System.out.println("========================================\n");
     }
 
 
