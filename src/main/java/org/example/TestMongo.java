@@ -58,6 +58,19 @@ public class TestMongo {
         Domicilio domicilioEmpleado8 = new Domicilio(0011, "Calle 17", "7753", localidad);
         Domicilio domicilioEmpleado9 = new Domicilio(0012, "Calle 18", "1235", localidad);
         
+        //domicilios clientes
+        
+        Domicilio domicilioCliente1 = new Domicilio(0013, "Calle 19", "23239", localidad);
+        Domicilio domicilioCliente2 = new Domicilio(0013, "Calle 20", "817", localidad);
+        Domicilio domicilioCliente3 = new Domicilio(0013, "Calle 21", "12391", localidad);
+        Domicilio domicilioCliente4 = new Domicilio(0013, "Calle 22", "990", localidad);
+        Domicilio domicilioCliente5 = new Domicilio(0013, "Calle 23", "112", localidad);
+        Domicilio domicilioCliente6 = new Domicilio(0013, "Calle 24", "89128", localidad);
+        Domicilio domicilioCliente7 = new Domicilio(0013, "Calle 25", "9128", localidad);
+        Domicilio domicilioCliente8 = new Domicilio(0013, "Calle 26", "9129", localidad);
+        Domicilio domicilioCliente9 = new Domicilio(0013, "Calle 27", "1092", localidad);
+        Domicilio domicilioCliente10 = new Domicilio(0013, "Calle 28", "11002", localidad);
+        
         //crear empleado
         Empleado empleadoSucursal1Atencion = new Empleado(0001, "Lucía", "Gómez", "29333444", "2245454545", "AF789012", domicilioEmpleado1, obraSocial, null);
         Empleado empleadoSucursal2Atencion = new Empleado(0002, "Oscar", "Gómez", "12345678", "2365788745", "AF652845", domicilioEmpleado2, obraSocial2, null);        
@@ -82,15 +95,16 @@ public class TestMongo {
         empleadoSucursal3Cobro.setSucursal(sucursal3);
 
         //cliente
-        Cliente cliente1 = new Cliente(0001, "Juan", "Perez", "30123456", "AF123456", null, obraSocial);
-        Cliente cliente3 = new Cliente(0003, "Esteban", "Martinez", "30345678", "AF345678", null, obraSocial);
-        Cliente cliente4 = new Cliente(0004, "Sofia", "Fernandez", "30456789", "AF456789", null, obraSocial);
-        Cliente cliente5 = new Cliente(0005, "Diego", "Rodriguez", "30567890", "AF567890", null, obraSocial);
-        Cliente cliente6 = new Cliente(0006, "Valeria", "Torres", "30678901", "AF678901", null, obraSocial);
-        Cliente cliente7 = new Cliente(0007, "Agustin", "Sanchez", "30789012", "AF789012", null, obraSocial);
-        Cliente cliente8 = new Cliente(8l, "Camila", "Morales", "30890123", "AF890123", null, obraSocial);
-        Cliente cliente9 = new Cliente(9l, "Tomas", "Vega", "30901234", "AF901234", null, obraSocial);
-        Cliente cliente10 = new Cliente(0010, "Florencia", "Navarro", "31012345", "AF012345", null, obraSocial);
+        Cliente cliente1 = new Cliente(0001, "Juan", "Perez", "30123456", "AF123456", domicilioCliente1, obraSocial);
+        Cliente cliente2 = new Cliente(0002, "Gonzalo", "Fabra", "66788421", null, domicilioCliente2, null);
+        Cliente cliente3 = new Cliente(0003, "Esteban", "Martinez", "30345678", null, domicilioCliente3, null);
+        Cliente cliente4 = new Cliente(0004, "Sofia", "Fernandez", "30456789", "AF456789", domicilioCliente4, obraSocial);
+        Cliente cliente5 = new Cliente(0005, "Diego", "Rodriguez", "30567890", "AF567890", domicilioCliente5, obraSocial);
+        Cliente cliente6 = new Cliente(0006, "Valeria", "Torres", "30678901", null, domicilioCliente6, null);
+        Cliente cliente7 = new Cliente(0007, "Agustin", "Sanchez", "30789012", "AF789012", domicilioCliente7, obraSocial);
+        Cliente cliente8 = new Cliente(8l, "Camila", "Morales", "30890123", "AF890123", domicilioCliente8, obraSocial);
+        Cliente cliente9 = new Cliente(9l, "Tomas", "Vega", "30901234", null, domicilioCliente9, null);
+        Cliente cliente10 = new Cliente(0010, "Florencia", "Navarro", "31012345", "AF012345", domicilioCliente10, obraSocial);
 
         // Crear producto
         Producto producto1 = new Producto(1, true, "Ibuprofeno 600mg", "Bagó", "IBU600", 120.0);
@@ -219,7 +233,7 @@ public class TestMongo {
         ObjectMapper mapper = JacksonUtils.getMapper();
 
 		try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
-			MongoDatabase database = mongoClient.getDatabase("miFarmaciaDB");
+			MongoDatabase database = mongoClient.getDatabase("farmaciaDBGrupoM");
 			MongoCollection<Document> coleccionVentas = database.getCollection("ventas");
 
 			// Convertir la venta a JSON y luego a Document (Mongo)
