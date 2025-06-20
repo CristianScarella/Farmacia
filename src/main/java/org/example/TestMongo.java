@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.example.utils.JacksonUtils;
+import org.example.utils.MongoUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,16 +47,27 @@ public class TestMongo {
         Domicilio domicilioSucursal2 = new Domicilio(0002, "Calle 8", "5678", localidad);
         Domicilio domicilioSucursal3 = new Domicilio(0003, "Calle 9", "9998", localidad);
 
+        //domicilios Empleados
+        Domicilio domicilioEmpleado1 = new Domicilio(0004, "Calle 10", "1902", localidad);
+        Domicilio domicilioEmpleado2 = new Domicilio(0005, "Calle 11", "3212", localidad);
+        Domicilio domicilioEmpleado3 = new Domicilio(0006, "Calle 12", "3265", localidad);
+        Domicilio domicilioEmpleado4 = new Domicilio(0007, "Calle 13", "734", localidad);
+        Domicilio domicilioEmpleado5 = new Domicilio(8l, "Calle 14", "155", localidad);
+        Domicilio domicilioEmpleado6 = new Domicilio(9l, "Calle 15", "23", localidad);
+        Domicilio domicilioEmpleado7 = new Domicilio(0010, "Calle 16", "7342", localidad);
+        Domicilio domicilioEmpleado8 = new Domicilio(0011, "Calle 17", "7753", localidad);
+        Domicilio domicilioEmpleado9 = new Domicilio(0012, "Calle 18", "1235", localidad);
+        
         //crear empleado
-        Empleado empleadoSucursal1Atencion = new Empleado(0001, "Lucía", "Gómez", "29333444", "2245454545", "AF789012", null, obraSocial, null);
-        Empleado empleadoSucursal2Atencion = new Empleado(0002, "Oscar", "Gómez", "12345678", "2365788745", "AF652845", null, obraSocial2, null);        
-        Empleado empleadoSucursal3Atencion= new Empleado(0003, "Andrea", "Mendez", "99667555", "27996675559", "AF9732200", null, obraSocial4, null);
-        Empleado empleadoSucursal1Cobro = new Empleado(0004, "Roberto", "Garcia", "7845653252", "2352568522", "AF124512", null, obraSocial3, null);
-        Empleado empleadoSucursal2Cobro = new Empleado(0005, "Ricardo", "Fort", "99888777", "20998887773", "AF829402", null, obraSocial4, null);
-        Empleado empleadoSucursal3Cobro = new Empleado(0006, "Jorge", "Ruiz", "22928663", "20229286639", "AF819270", null, obraSocial5, null);
-        Empleado empleadoSucursal1Encargado = new Empleado(0007, "Homero", "Simpson", "88433246", "20884332469", "AF8111200", null, obraSocial, null);
-        Empleado empleadoSucursal2Encargado = new Empleado(8l, "Maria", "Lopez", "55777666", "27557776669", "AF8222200", null, obraSocial2, null);
-        Empleado empleadoSucursal3Encargado = new Empleado(9l, "Carlos", "Diaz", "43323487", "20433234878", "AF9332200", null, obraSocial3, null);
+        Empleado empleadoSucursal1Atencion = new Empleado(0001, "Lucía", "Gómez", "29333444", "2245454545", "AF789012", domicilioEmpleado1, obraSocial, null);
+        Empleado empleadoSucursal2Atencion = new Empleado(0002, "Oscar", "Gómez", "12345678", "2365788745", "AF652845", domicilioEmpleado2, obraSocial2, null);        
+        Empleado empleadoSucursal3Atencion= new Empleado(0003, "Andrea", "Mendez", "99667555", "27996675559", "AF9732200", domicilioEmpleado3, obraSocial4, null);
+        Empleado empleadoSucursal1Cobro = new Empleado(0004, "Roberto", "Garcia", "7845653252", "2352568522", "AF124512", domicilioEmpleado4, obraSocial3, null);
+        Empleado empleadoSucursal2Cobro = new Empleado(0005, "Ricardo", "Fort", "99888777", "20998887773", "AF829402", domicilioEmpleado5, obraSocial4, null);
+        Empleado empleadoSucursal3Cobro = new Empleado(0006, "Jorge", "Ruiz", "22928663", "20229286639", "AF819270", domicilioEmpleado6, obraSocial5, null);
+        Empleado empleadoSucursal1Encargado = new Empleado(0007, "Homero", "Simpson", "88433246", "20884332469", "AF8111200", domicilioEmpleado7, obraSocial, null);
+        Empleado empleadoSucursal2Encargado = new Empleado(8l, "Maria", "Lopez", "55777666", "27557776669", "AF8222200", domicilioEmpleado8, obraSocial2, null);
+        Empleado empleadoSucursal3Encargado = new Empleado(9l, "Carlos", "Diaz", "43323487", "20433234878", "AF9332200", domicilioEmpleado9, obraSocial3, null);
 
         //sucursal
         Sucursal sucursal1 = new Sucursal(0001, 0001l, domicilioSucursal1, empleadoSucursal1Encargado);
@@ -228,18 +240,16 @@ public class TestMongo {
 			String fechaDesde = "2025-06-01";
 			String fechaHasta = "2025-06-06";
 
-			realizarConsulta1(coleccionVentas, fechaDesde, fechaHasta);
+			MongoUtils.realizarConsulta1(coleccionVentas, fechaDesde, fechaHasta);
 
-			realizarConsulta3(coleccionVentas, fechaDesde, fechaHasta);
-			realizarConsulta4(coleccionVentas, fechaDesde, fechaHasta);
-			realizarConsulta5(coleccionVentas);
-			realizarConsulta6(coleccionVentas);
+			MongoUtils.realizarConsulta3(coleccionVentas, fechaDesde, fechaHasta);
+			MongoUtils.realizarConsulta4(coleccionVentas, fechaDesde, fechaHasta);
+			MongoUtils.realizarConsulta5(coleccionVentas);
+			MongoUtils.realizarConsulta6(coleccionVentas);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-
 
         // ENTREGA 1
 
@@ -261,9 +271,6 @@ public class TestMongo {
         // Siempre cerrar la conexión al terminar
         mongoClient.close();
         */
-
-
-
     }
 
     private static Venta generarVenta(Long idVenta, LocalDate fechaVenta, String nroTicket, Sucursal sucursal, Empleado empleadoAtencion, Empleado empleadoCobro, List<DetalleVenta> detallesVenta) {
@@ -285,127 +292,4 @@ public class TestMongo {
         venta1.setDetallesVenta(detallesVenta);
         return venta1;
     }
-
-    private static void realizarConsulta1(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
-    	System.out.println("========================================");
-    	System.out.println("Consulta 1");
-    	
-        var pipeline = Arrays.asList(
-            Aggregates.match(Filters.and(
-                Filters.gte("fechaVenta", fechaDesde),
-                Filters.lte("fechaVenta", fechaHasta)
-            )),
-            Aggregates.group(
-                "$puntoVenta",
-                Accumulators.sum("cantidadVentas", 1)
-            ),
-            Aggregates.group(
-                null,
-                Accumulators.sum("totalCadena", "$cantidadVentas"),
-                Accumulators.push("porSucursal", new Document("sucursal", "$_id")
-                    .append("cantidad", "$cantidadVentas"))
-            )
-        );
-
-        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
-        
-        System.out.println("========================================\n");
-    }
-
-    private static void realizarConsulta3(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
-    	System.out.println("========================================");
-    	System.out.println("Consulta 3");
-
-        var pipeline = Arrays.asList(
-            Aggregates.match(Filters.and(
-                Filters.gte("fechaVenta", fechaDesde),
-                Filters.lte("fechaVenta", fechaHasta)
-            )),
-            Aggregates.group(
-                "$puntoVenta",
-                Accumulators.sum("totalSucursal", "$totalVenta")
-            ),
-            Aggregates.group(
-                null,
-                Accumulators.sum("totalCadena", "$totalSucursal"),
-                Accumulators.push("porSucursal", new Document("sucursal", "$_id")
-                    .append("total", "$totalSucursal"))
-            )
-        );
-
-        // Imprime cada uno de los resultados
-        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
-        
-    	System.out.println("========================================\n");
-    }
-
-    private static void realizarConsulta4(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
-    	System.out.println("========================================");
-    	System.out.println("Consulta 4");
-
-        var pipeline = Arrays.asList(
-            Aggregates.match(Filters.and(
-                Filters.gte("fechaVenta", fechaDesde),
-                Filters.lte("fechaVenta", fechaHasta)
-            )),
-            Aggregates.unwind("$detallesVenta"),
-            Aggregates.group(
-                new Document("tipoProducto",
-                    new Document("$cond", Arrays.asList(
-                        "$detallesVenta.producto.esMedicamento",
-                        "Farmacia",
-                        "Perfumería"
-                    ))
-                ),
-                Accumulators.sum("cantidad", "$detallesVenta.cantidad")
-            )
-        );
-
-        // Imprime cada uno de los resultados
-        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
-
-        System.out.println("========================================\n");
-    }
-    
-    private static void realizarConsulta5(MongoCollection<Document> coleccionVentas) {
-    	System.out.println("========================================");
-    	System.out.println("Consulta 5");
-
-        var pipeline = Arrays.asList(
-            Aggregates.unwind("$detallesVenta"),
-            Aggregates.group(
-                new Document("producto", "$detallesVenta.producto.descripcionProducto")
-                    .append("sucursal", "$puntoVenta"),
-                Accumulators.sum("montoTotal", "$detallesVenta.subTotal")
-            ),
-            Aggregates.sort(new Document("montoTotal", -1))
-        );
-
-        // Imprime cada uno de los resultados
-        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
-
-        System.out.println("========================================\n");
-    }
-    
-    private static void realizarConsulta6(MongoCollection<Document> coleccionVentas) {
-    	System.out.println("========================================");
-    	System.out.println("Consulta 6");
-
-        var pipeline = Arrays.asList(
-            Aggregates.unwind("$detallesVenta"),
-            Aggregates.group(
-                new Document("producto", "$detallesVenta.producto.descripcionProducto")
-                    .append("sucursal", "$puntoVenta"),
-                Accumulators.sum("cantidadVendida", "$detallesVenta.cantidad")
-            ),
-            Aggregates.sort(new Document("cantidadVendida", -1))
-        );
-
-        // Imprime cada uno de los resultados
-        coleccionVentas.aggregate(pipeline).forEach(doc -> System.out.println(doc.toJson()));
-
-        System.out.println("========================================\n");
-    }
-
-
 }
