@@ -290,54 +290,6 @@ public class TestMongo {
         return venta1;
     }
 
-    private static Empleado getEmpleado4(ObraSocial obraSocial) {
-        Empleado empleado = new Empleado();
-        empleado.setIdEmpleado(0004);
-        empleado.setNombreEmpleado("Ricardo");
-        empleado.setApellidoEmpleado("Fort");
-        empleado.setDniEmpleado("99888777");
-        empleado.setCuil("20998887773");
-        empleado.setNroAfiliadoObraSocialEmpleado("AF829402");
-        empleado.setObraSocial(obraSocial);
-        return empleado;
-    }
-
-    private static Empleado getEmpleado3(ObraSocial obraSocial) {
-        Empleado empleado3 = new Empleado();
-        empleado3.setIdEmpleado(0003);
-        empleado3.setNombreEmpleado("Roberto");
-        empleado3.setApellidoEmpleado("Garcia");
-        empleado3.setDniEmpleado("7845653252");
-        empleado3.setCuil("2352568522");
-        empleado3.setNroAfiliadoObraSocialEmpleado("AF124512");
-        empleado3.setObraSocial(obraSocial);
-        return empleado3;
-    }
-
-    private static Empleado getEmpleado2(ObraSocial obraSocial) {
-        Empleado empleado2 = new Empleado();
-        empleado2.setIdEmpleado(0002);
-        empleado2.setNombreEmpleado("Oscar");
-        empleado2.setApellidoEmpleado("Gómez");
-        empleado2.setDniEmpleado("12345678");
-        empleado2.setCuil("2365788745");
-        empleado2.setNroAfiliadoObraSocialEmpleado("AF652845");
-        empleado2.setObraSocial(obraSocial);
-        return empleado2;
-    }
-
-    private static Empleado getEmpleado1(ObraSocial obraSocial) {
-        Empleado empleado = new Empleado();
-        empleado.setIdEmpleado(0001);
-        empleado.setNombreEmpleado("Lucía");
-        empleado.setApellidoEmpleado("Gómez");
-        empleado.setDniEmpleado("29333444");
-        empleado.setCuil("2245454545");
-        empleado.setNroAfiliadoObraSocialEmpleado("AF789012");
-        empleado.setObraSocial(obraSocial);
-        return empleado;
-    }
-
     private static void realizarConsulta1(MongoCollection<Document> coleccionVentas, String fechaDesde, String fechaHasta) {
     	System.out.println("========================================");
     	System.out.println("Consulta 1");
