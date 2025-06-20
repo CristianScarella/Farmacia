@@ -8,6 +8,7 @@ import java.util.List;
 import org.bson.Document;
 import org.example.utils.JacksonUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -200,48 +201,43 @@ public class TestMongo {
         ventasTotales.add(generarVenta((long) 88, LocalDate.of(2025,06,28),sucursal3.getPuntoDeVenta()+"-33333360", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta8, detalleVenta12)));
         ventasTotales.add(generarVenta((long) 89, LocalDate.of(2025,06,29),sucursal3.getPuntoDeVenta()+"-33333361", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta12)));
         ventasTotales.add(generarVenta((long) 90, LocalDate.of(2025,06,30),sucursal3.getPuntoDeVenta()+"-33333362", sucursal3, empleadoSucursal3Atencion, empleadoSucursal3Cobro, List.of(detalleVenta1, detalleVenta6)));
-
-
-
         // Fin de carga de datos
 
         // Convertir a JSON con Jackson
         ObjectMapper mapper = JacksonUtils.getMapper();
 
-        try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
-            MongoDatabase database = mongoClient.getDatabase("miFarmaciaDB");
-            MongoCollection<Document> coleccionVentas = database.getCollection("ventas");
+		try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+			MongoDatabase database = mongoClient.getDatabase("miFarmaciaDB");
+			MongoCollection<Document> coleccionVentas = database.getCollection("ventas");
 
-//            // Convertir la venta a JSON y luego a Document (Mongo)
-//            List<Document> documentosVentas = ventasTotales.stream()
-//                    .map(venta -> {
-//                        try {
-//                            String json = mapper.writeValueAsString(venta);
-//                            return Document.parse(json);
-//                        } catch (JsonProcessingException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    })
-//                    .toList();
-//
-//            coleccionVentas.insertMany(documentosVentas);
+			// Convertir la venta a JSON y luego a Document (Mongo)
+			List<Document> documentosVentas = ventasTotales.stream().map(venta -> {
+				try {
+					String json = mapper.writeValueAsString(venta);
+					return Document.parse(json);
+				} catch (JsonProcessingException e) {
+					throw new RuntimeException(e);
+				}
+			}).toList();
 
-            System.out.println("Ventas insertadas exitosamente en MongoDB");
-            
-            System.out.println("Se procede a realizar las consultas en MongoDB");
-            String fechaDesde = "2025-06-01";
-            String fechaHasta = "2025-06-06";
+			coleccionVentas.insertMany(documentosVentas);
 
-            realizarConsulta1(coleccionVentas, fechaDesde, fechaHasta);
-            //realizarConsulta2(coleccionVentas);
-            realizarConsulta3(coleccionVentas, fechaDesde, fechaHasta);
-            realizarConsulta4(coleccionVentas, fechaDesde, fechaHasta);
-            realizarConsulta5(coleccionVentas);
-            realizarConsulta6(coleccionVentas);
+			System.out.println("Ventas insertadas exitosamente en MongoDB");
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+			System.out.println("Se procede a realizar las consultas en MongoDB");
+			String fechaDesde = "2025-06-01";
+			String fechaHasta = "2025-06-06";
+
+			realizarConsulta1(coleccionVentas, fechaDesde, fechaHasta);
+
+			realizarConsulta3(coleccionVentas, fechaDesde, fechaHasta);
+			realizarConsulta4(coleccionVentas, fechaDesde, fechaHasta);
+			realizarConsulta5(coleccionVentas);
+			realizarConsulta6(coleccionVentas);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 
 
