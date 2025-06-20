@@ -15,6 +15,7 @@ import com.mongodb.client.model.Filters;
 import modelo.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.example.utils.JacksonUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -72,13 +73,21 @@ public class TestMongo {
         cliente.setObraSocial(obraSocial);
 
         // Crear producto
-        Producto producto = new Producto();
-        producto.setIdProducto(0001);
-        producto.setDescripcionProducto("Ibuprofeno 600mg");
-        producto.setLaboratorio("Bagó");
-        producto.setCodigoProducto("IBU600");
-        producto.setPrecioProducto(120.0);
-        producto.setEsMedicamento(true);
+        Producto productoMedicamento = new Producto();
+        productoMedicamento.setIdProducto(0001);
+        productoMedicamento.setDescripcionProducto("Ibuprofeno 600mg");
+        productoMedicamento.setLaboratorio("Bagó");
+        productoMedicamento.setCodigoProducto("IBU600");
+        productoMedicamento.setPrecioProducto(120.0);
+        productoMedicamento.setEsMedicamento(true);
+
+        Producto productoPerfume = new Producto();
+        productoPerfume.setIdProducto(0002);
+        productoPerfume.setDescripcionProducto("Perfume Dior Sauvage 100ml");
+        productoPerfume.setLaboratorio("Dior");
+        productoPerfume.setCodigoProducto("DIOR100");
+        productoPerfume.setPrecioProducto(42000.0);
+        productoPerfume.setEsMedicamento(false);
 
         // Crear venta
         Venta venta = new Venta();
@@ -89,10 +98,10 @@ public class TestMongo {
 
         // Crear detalle de venta
         DetalleVenta detalle = new DetalleVenta();
-        detalle.setProducto(producto);
+        detalle.setProducto(productoMedicamento);
         detalle.setCantidad(2);
-        detalle.setPrecioUnitario(producto.getPrecioProducto());
-        detalle.setSubTotal(producto.getPrecioProducto() * detalle.getCantidad());
+        detalle.setPrecioUnitario(productoMedicamento.getPrecioProducto());
+        detalle.setSubTotal(productoMedicamento.getPrecioProducto() * detalle.getCantidad());
 
         venta.setTotalVenta(detalle.getSubTotal());
         venta.setFormaPago("EFECTIVO");
@@ -124,10 +133,13 @@ public class TestMongo {
         sucursal.setDomicilio(domicilio);
         sucursal.setEncargado(empleado3);
 
+        empleado.setSucursal(sucursal);
+        empleado2.setSucursal(sucursal);
+
+        // Fin de carga de datos
+
         // Convertir a JSON con Jackson
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // para escribir fechas como texto (ISO)
+        ObjectMapper mapper = JacksonUtils.getMapper();
 
         try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
             MongoDatabase database = mongoClient.getDatabase("miFarmaciaDB");
@@ -139,31 +151,11 @@ public class TestMongo {
 
             // Insertar en MongoDB
             coleccionVentas.insertOne(ventaDoc);
- 
-            var pipeline = Arrays.asList(
-                    Aggregates.match(Filters.and(
-                            Filters.gte("fechaVenta", "2025-06-01"),
-                            Filters.lte("fechaVenta", "2025-06-30")
-                    )),
-                    Aggregates.group(
-                            "$puntoVenta",
-                            Accumulators.sum("totalSucursal", "$totalVenta"),
-                            Accumulators.sum("cantidadVentas", 1)
-                    ),
-                    Aggregates.group(
-                            null,
-                            Accumulators.sum("totalGeneral", "$totalSucursal"),
-                            Accumulators.push("porSucursal", new Document("puntoVenta", "$_id")
-                                    .append("totalSucursal", "$totalSucursal")
-                                    .append("cantidadVentas", "$cantidadVentas"))
-                    )
-            );
-
-            coleccionVentas.aggregate(pipeline).forEach(doc -> {
-                System.out.println(doc.toJson());
-            });
 
             System.out.println("Venta insertada exitosamente en MongoDB");
+
+            realizarConsulta1(coleccionVentas);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -193,6 +185,33 @@ public class TestMongo {
 
 
 
+    }
+
+    private static void realizarConsulta1(MongoCollection<Document> coleccionVentas) {
+        var pipeline = Arrays.asList(
+                Aggregates.match(Filters.and(
+                        Filters.gte("fechaVenta", "2025-06-01"),
+                        Filters.lte("fechaVenta", "2025-06-30")
+                )),
+                Aggregates.group(
+                        "$puntoVenta",
+                        Accumulators.sum("totalSucursal", "$totalVenta"),
+                        Accumulators.sum("cantidadVentas", 1),
+                        Accumulators.push("detalles", "$detallesVenta")
+                ),
+                Aggregates.group(
+                        null,
+                        Accumulators.sum("totalGeneral", "$totalSucursal"),
+                        Accumulators.push("porSucursal", new Document("puntoVenta", "$_id")
+                                .append("totalSucursal", "$totalSucursal")
+                                .append("cantidadVentas", "$cantidadVentas")
+                                .append("detalles", "$detalles"))
+                )
+        );
+
+        coleccionVentas.aggregate(pipeline).forEach(doc -> {
+            System.out.println(doc.toJson());
+        });
     }
 
 
